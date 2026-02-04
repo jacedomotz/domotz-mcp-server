@@ -1,6 +1,6 @@
 # Domotz MCP Server for Claude
 
-Connect Claude AI to your Domotz network monitoring platform using the Model Context Protocol (MCP). This integration gives Claude access to all 130+ Domotz API endpoints, enabling natural language queries about your network infrastructure.
+Connect Claude AI to your Domotz network monitoring platform using the Model Context Protocol (MCP). This integration gives Claude access to **10 category tools covering 133 API actions**, enabling natural language queries about your network infrastructure.
 
 ## What This Does
 
@@ -91,7 +91,7 @@ Open the file and add the Domotz MCP server configuration. Use `claude_desktop_c
    - **US:** `https://api-us-east-1-cell-1.domotz.com/public-api/v1`
    - **Europe:** `https://api-eu-west-1-cell-1.domotz.com/public-api/v1`
 
-> ⚠️ **Windows users:** Use double backslashes (`\\`) in the path, or forward slashes (`/`).
+> **Windows users:** Use double backslashes (`\\`) in the path, or forward slashes (`/`).
 
 ### Step 5: Restart Claude Desktop
 
@@ -109,19 +109,22 @@ If configured correctly, Claude will query the Domotz API and return your collec
 
 ## Available Capabilities
 
-This MCP server exposes **130+ Domotz API endpoints** organized into these categories:
+This MCP server exposes **10 category tools** covering **133 Domotz API actions**:
 
-| Category | Example Operations |
-|---|---|
-| **Collectors (Agents)** | List, get details, status history, uptime, VPN connections |
-| **Devices** | List all devices, get device details, status history, RTD metrics |
-| **Network Discovery** | Interfaces, IP scan policies, network topology |
-| **Monitoring** | SNMP sensors, TCP sensors, device variables |
-| **Alerting** | Alert profiles, bindings to collectors and devices |
-| **Configuration** | Device configuration backup and history |
-| **Power Management** | Power outlets, power actions on devices |
-| **Custom Drivers** | List, apply, and execute custom driver actions |
-| **Inventory** | Custom fields and device inventory data |
+| Tool | Actions | Example Operations |
+|------|---------|-------------------|
+| **domotz_agents** | 31 | List collectors, status history, uptime, VPN, topology, variables |
+| **domotz_devices** | 17 | List/get devices, status history, RTD metrics, connect, uptime |
+| **domotz_monitoring** | 13 | SNMP sensors, TCP sensors, triggers, sensor history |
+| **domotz_alerts** | 8 | Alert profiles, bind/unbind to collectors and devices |
+| **domotz_network** | 14 | Scan policies, interfaces, routed networks, excluded devices |
+| **domotz_configuration** | 8 | Config backups, credentials, SNMP authentication |
+| **domotz_power** | 7 | Power actions, outlets, attach/detach devices |
+| **domotz_drivers** | 8 | Custom drivers, associations, execute driver actions |
+| **domotz_inventory** | 19 | Custom fields, tags, device profiles, device types |
+| **domotz_account** | 5 | User info, API usage, areas, teams |
+
+Each tool uses an `action` parameter to select which API operation to perform. For example, `domotz_agents` with `action: "list"` lists all collectors, while `action: "ip_conflicts"` checks for IP conflicts.
 
 ---
 
@@ -182,12 +185,33 @@ The Domotz API has rate limits. If you're making many requests in quick successi
 
 ```
 domotz-mcp-server/
+├── index.js                            # MCP server entry point
+├── package.json                        # Node.js dependencies
 ├── README.md                           # This file
 ├── LICENSE                             # MIT license
-├── package.json                        # Node.js dependencies
-├── index.js                            # Main MCP server (130+ endpoints)
-├── .env.example                        # Environment variables template
-└── claude_desktop_config.example.json  # Claude Desktop config template
+├── claude_desktop_config.example.json  # Claude Desktop config template
+├── lib/
+│   ├── api.js                          # Domotz API client (Axios)
+│   └── registry.js                     # Generic action dispatcher
+├── categories/
+│   ├── agents.js                       # domotz_agents (31 actions)
+│   ├── devices.js                      # domotz_devices (17 actions)
+│   ├── monitoring.js                   # domotz_monitoring (13 actions)
+│   ├── alerts.js                       # domotz_alerts (8 actions)
+│   ├── network.js                      # domotz_network (14 actions)
+│   ├── configuration.js               # domotz_configuration (8 actions)
+│   ├── power.js                        # domotz_power (7 actions)
+│   ├── drivers.js                      # domotz_drivers (8 actions)
+│   ├── inventory.js                    # domotz_inventory (19 actions)
+│   └── account.js                      # domotz_account (5 actions)
+└── .claude/
+    └── skills/
+        └── domotz-api/                 # Claude Code skill (auto-loaded)
+            ├── SKILL.md                # Main skill reference
+            ├── references/
+            │   └── tool-reference.md   # Full action catalog
+            └── examples/
+                └── common-queries.md   # Natural language → tool call examples
 ```
 
 ---
