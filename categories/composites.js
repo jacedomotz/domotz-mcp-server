@@ -6,7 +6,7 @@
 export const tools = [
   {
     name: 'domotz_get_device_full_status',
-    description: 'Get comprehensive device status in a single call. Combines 5 API calls into one: device info, status history, SNMP sensors, TCP sensors, and alert bindings. Use this instead of making separate calls when you need a full picture of a device. Requires agent_id and device_id. Results are summarized if >10 items in any category.',
+    description: 'Get comprehensive device status in a single call. Combines 5 API calls into one: device info, status history, SNMP sensors, TCP sensors, and alert bindings. Use this instead of making separate calls when you need a full picture of a device. Requires agent_id and device_id. Results are summarized if >50 items in any category.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -18,7 +18,7 @@ export const tools = [
   },
   {
     name: 'domotz_get_agent_overview',
-    description: 'Get a collector overview in a single call. Combines agent details, full device list, and uptime into one response. Use this as your starting point when exploring a collector/site. Requires agent_id. Device list is summarized (first 10 + total count) if >10 devices.',
+    description: 'Get a collector overview in a single call. Combines agent details, full device list, and uptime into one response. Use this as your starting point when exploring a collector/site. Requires agent_id. Device list is summarized (first 50 + total count) if >50 devices.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -41,9 +41,17 @@ export const tools = [
   }
 ];
 
+const SUMMARY_LIMIT = parseInt(process.env.DOMOTZ_SUMMARY_LIMIT || '50', 10);
+
 function summarize(data) {
-  if (Array.isArray(data) && data.length > 10) {
-    return { total: data.length, items: data.slice(0, 10), truncated: true };
+  if (Array.isArray(data) && data.length > SUMMARY_LIMIT) {
+    return {
+      total: data.length,
+      showing: SUMMARY_LIMIT,
+      items: data.slice(0, SUMMARY_LIMIT),
+      truncated: true,
+      hint: `Showing first ${SUMMARY_LIMIT} of ${data.length} items.`
+    };
   }
   return data;
 }
