@@ -1,6 +1,32 @@
 export const tool = {
   name: 'domotz_monitoring',
-  description: 'Manage SNMP and TCP sensors (Eyes) on devices. Actions: list_snmp, create_snmp, delete_snmp, snmp_history, snmp_trigger_functions, list_snmp_triggers, create_snmp_trigger, delete_snmp_trigger, create_snmp_trigger_alert, delete_snmp_trigger_alert, list_tcp, create_tcp, delete_tcp',
+  description: `Manage SNMP and TCP sensors (called "Eyes" in Domotz) on devices. Use the "action" parameter to select an operation. Requires agent_id and device_id for all actions.
+
+ACTION REFERENCE:
+- list_snmp: List all SNMP sensors on a device
+- create_snmp: Create an SNMP sensor (needs body with OID config)
+- delete_snmp: Delete an SNMP sensor (needs sensor_id)
+- snmp_history: SNMP sensor value history over time (needs sensor_id, filterable by from/to)
+- snmp_trigger_functions: List available trigger functions for an SNMP sensor (needs sensor_id)
+- list_snmp_triggers: List triggers configured on an SNMP sensor (needs sensor_id)
+- create_snmp_trigger: Create a trigger on an SNMP sensor (needs sensor_id + body)
+- delete_snmp_trigger: Delete a trigger (needs sensor_id + trigger_id)
+- create_snmp_trigger_alert: Bind an alert medium to a trigger (needs sensor_id + trigger_id + medium_name e.g. "email", "slack")
+- delete_snmp_trigger_alert: Remove alert medium from trigger (needs sensor_id + trigger_id + medium_name)
+- list_tcp: List TCP sensors on a device
+- create_tcp: Create a TCP sensor (needs body with port/host config)
+- delete_tcp: Delete a TCP sensor (needs service_id)
+
+GOTCHAS:
+- SNMP sensors and TCP sensors use different ID params: sensor_id for SNMP, service_id for TCP
+- Trigger workflow: first list_snmp -> get sensor_id -> snmp_trigger_functions to see what's available -> create_snmp_trigger -> create_snmp_trigger_alert to get notifications
+- from/to on snmp_history accept ISO 8601 timestamps, default to last 7 days
+
+EXAMPLES:
+- List SNMP sensors: {"action": "list_snmp", "agent_id": 5, "device_id": 50}
+- Sensor history: {"action": "snmp_history", "agent_id": 5, "device_id": 50, "sensor_id": 3}
+- List TCP sensors: {"action": "list_tcp", "agent_id": 5, "device_id": 50}
+- Available trigger functions: {"action": "snmp_trigger_functions", "agent_id": 5, "device_id": 50, "sensor_id": 3}`,
   inputSchema: {
     type: 'object',
     properties: {

@@ -1,6 +1,38 @@
 export const tool = {
   name: 'domotz_devices',
-  description: 'Manage devices on Domotz collectors. Actions: list, get, delete, delete_down, edit, hide, status_history, rtd_history, connect, onvif_snapshot, uptime, monitoring_state, applications, count_applications, variables, count_variables, variable_history',
+  description: `Manage devices on Domotz collectors. Use the "action" parameter to select an operation. Most actions require agent_id and device_id.
+
+ACTION REFERENCE:
+- list: List all devices on a collector (supports show_hidden, show_excluded filters)
+- get: Get single device details
+- delete: Delete a device
+- delete_down: Delete ALL down devices on a collector (only needs agent_id)
+- edit: Edit a device field (needs "field" param for the field name e.g. "importance", "details", and body with the new value)
+- hide: Hide a device from the dashboard
+- status_history: Device online/offline event history (filterable by from/to)
+- rtd_history: Round-trip delay (latency) time series (filterable by from/to)
+- connect: Create a remote connection to device (needs body with connection config)
+- onvif_snapshot: Get ONVIF camera snapshot image
+- uptime: Device uptime percentage (filterable by from/to)
+- monitoring_state: Set monitoring state (needs body)
+- applications: Applications running on a device (paginated)
+- count_applications: Count applications (lightweight HEAD request)
+- variables: Device variables (paginated, filterable by value/path/metric)
+- count_variables: Count device variables (lightweight HEAD request)
+- variable_history: Time-series for a specific device variable (needs variable_id)
+
+GOTCHAS:
+- The "edit" action uses a "field" URL parameter to specify WHICH field to update (e.g. "importance", "details"), plus a body with the new value
+- count_applications/count_variables use HEAD requests and return {"count": N}
+- from/to accept ISO 8601 timestamps, default to last 7 days if omitted
+- delete_down deletes ALL down devices on the collector - use with caution
+
+EXAMPLES:
+- List devices: {"action": "list", "agent_id": 5}
+- Get device details: {"action": "get", "agent_id": 5, "device_id": 200}
+- Device status history: {"action": "status_history", "agent_id": 5, "device_id": 42}
+- Latency history: {"action": "rtd_history", "agent_id": 5, "device_id": 99}
+- Device uptime: {"action": "uptime", "agent_id": 2, "device_id": 10, "from": "2025-01-01T00:00:00Z"}`,
   inputSchema: {
     type: 'object',
     properties: {

@@ -6,7 +6,7 @@
 export const tools = [
   {
     name: 'domotz_get_device_full_status',
-    description: 'Get comprehensive device status in a single call: device info, status history, SNMP sensors, TCP sensors, and alert bindings.',
+    description: 'Get comprehensive device status in a single call. Combines 5 API calls into one: device info, status history, SNMP sensors, TCP sensors, and alert bindings. Use this instead of making separate calls when you need a full picture of a device. Requires agent_id and device_id. Results are summarized if >10 items in any category.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -18,7 +18,7 @@ export const tools = [
   },
   {
     name: 'domotz_get_agent_overview',
-    description: 'Get agent details, device list, and uptime in a single call. Device list is summarized if >10 devices.',
+    description: 'Get a collector overview in a single call. Combines agent details, full device list, and uptime into one response. Use this as your starting point when exploring a collector/site. Requires agent_id. Device list is summarized (first 10 + total count) if >10 devices.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -29,7 +29,7 @@ export const tools = [
   },
   {
     name: 'domotz_search_devices',
-    description: 'Search devices by name or IP across one or all agents. Returns matching devices with their agent_id.',
+    description: 'Search devices by name or IP address across one or all collectors. Returns matching devices with their agent_id so you know which collector they belong to. Provide "query" (search string) and optionally "agent_id" to limit search to one collector. Without agent_id, searches ALL collectors. Great for finding a device when you don\'t know which site it\'s on.',
     inputSchema: {
       type: 'object',
       properties: {

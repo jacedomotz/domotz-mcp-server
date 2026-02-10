@@ -1,6 +1,24 @@
 export const tool = {
   name: 'domotz_configuration',
-  description: 'Manage device configuration backups, credentials, and SNMP authentication. Actions: backup, history, create_config, get_config, set_credentials, get_snmp_auth, set_snmp_auth, set_snmp_community',
+  description: `Manage device configuration backups, credentials, and SNMP authentication. Use the "action" parameter to select an operation. Requires agent_id and device_id for all actions.
+
+ACTION REFERENCE:
+- backup: Trigger a config backup for a device
+- history: List config backup history for a device
+- create_config: Upload a configuration (needs body)
+- get_config: Get a specific config by timestamp (needs configuration_timestamp)
+- set_credentials: Set device credentials for SSH/Telnet (needs body)
+- get_snmp_auth: Get SNMP authentication settings
+- set_snmp_auth: Set SNMP v3 authentication (needs body)
+- set_snmp_community: Set SNMP community string (needs body)
+
+GOTCHAS:
+- Backup workflow: first trigger "backup", then use "history" to see available backups, then "get_config" with the timestamp to retrieve one
+
+EXAMPLES:
+- Trigger backup: {"action": "backup", "agent_id": 5, "device_id": 30}
+- View backup history: {"action": "history", "agent_id": 5, "device_id": 30}
+- Get SNMP settings: {"action": "get_snmp_auth", "agent_id": 5, "device_id": 30}`,
   inputSchema: {
     type: 'object',
     properties: {

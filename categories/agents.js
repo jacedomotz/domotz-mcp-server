@@ -1,6 +1,52 @@
 export const tool = {
   name: 'domotz_agents',
-  description: 'Manage Domotz collectors (agents). Use "action" to specify the operation. Actions: list, count, get, delete, activity_log, connection_consumption, vpn_connections, create_vpn, delete_vpn, status_history, speed_test_history, ip_conflicts, rtd_stats, network_topology, uptime, list_uptime_all, variables, count_variables, variable_history, move, eyes_usage, metric_usage, device_applications, count_device_applications, device_variables, count_device_variables, eyes_snmp, eyes_tcp, unmanaged_devices, external_host, dhcp_discovery',
+  description: `Manage Domotz collectors (agents). Use the "action" parameter to select an operation. Requires agent_id for most actions.
+
+ACTION REFERENCE:
+- list: List all collectors (paginated, filterable by display_name/team_name)
+- count: Count collectors (lightweight HEAD request, returns {"count": N})
+- get: Get single collector details by agent_id
+- delete: Delete a collector
+- activity_log: Collector activity log (filterable by from/to/type)
+- connection_consumption: Bandwidth consumption data
+- vpn_connections: List VPN sessions
+- create_vpn: Create a VPN session (needs body)
+- delete_vpn: Delete a VPN session (needs vpn_session_id)
+- status_history: Online/offline event history (filterable by from/to)
+- speed_test_history: Internet speed test results (filterable by from/to)
+- ip_conflicts: Detected IP conflicts on a collector
+- rtd_stats: Round-trip delay statistics for all devices on a collector
+- network_topology: Network topology map
+- uptime: Collector uptime percentage (filterable by from/to)
+- list_uptime_all: Uptime for ALL collectors (no agent_id needed - the only action that doesn't require one)
+- variables: Collector-level variables (paginated, filterable by value/path/metric)
+- count_variables: Count collector variables (lightweight HEAD request)
+- variable_history: Time-series for a specific variable (needs variable_id)
+- move: Move collector to a different team (needs team_id)
+- eyes_usage: SNMP/TCP sensor usage statistics
+- metric_usage: Metric usage statistics
+- device_applications: Applications across all devices on collector (paginated)
+- count_device_applications: Count applications (lightweight HEAD)
+- device_variables: Variables across all devices on collector (paginated)
+- count_device_variables: Count device variables (lightweight HEAD)
+- eyes_snmp: All SNMP sensors across collector
+- eyes_tcp: All TCP sensors across collector
+- unmanaged_devices: Devices not being monitored
+- external_host: Add an external host to monitor (needs body)
+- dhcp_discovery: Configure DHCP discovery (needs body)
+
+GOTCHAS:
+- count/count_variables/count_device_applications/count_device_variables use HEAD requests and return {"count": N} from the X-Entities-Count header
+- list_uptime_all is the ONLY action that works without specifying agent_id
+- from/to accept ISO 8601 timestamps, default to last 7 days if omitted
+- Use page_size (1-1000) and page_number (0-based) for large result sets
+
+EXAMPLES:
+- List all collectors: {"action": "list"}
+- Get collector details: {"action": "get", "agent_id": 5}
+- Check for IP conflicts: {"action": "ip_conflicts", "agent_id": 12}
+- Show network topology: {"action": "network_topology", "agent_id": 8}
+- Uptime for all collectors: {"action": "list_uptime_all"}`,
   inputSchema: {
     type: 'object',
     properties: {
